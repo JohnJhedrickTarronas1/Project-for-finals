@@ -1,4 +1,4 @@
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 
 function Discoveries() {
   const [search, setSearch]= useState("");
@@ -16,6 +16,7 @@ function Discoveries() {
       value={search}
       onChange={(e)=> setSearch(e.target.value)}
       />
+      <button type="submit">Search</button>
     </form>
   </div>
 
