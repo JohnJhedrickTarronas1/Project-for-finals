@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./Components/Navbar";
 import Home from "./Components/Home";
-import Discoveries from "./Components/Discoveries";
+import Discoveries from "./Components/Discoveries/Discoveries";
 import Weather from "./Components/Weather";
 import Converter from "./Components/Converter";
 
