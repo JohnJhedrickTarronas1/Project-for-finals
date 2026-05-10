@@ -16,6 +16,7 @@ function Discoveries() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [discoveries, setDiscoveries] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [isRecommended, setIsRecommended] = useState(true);
 
   const mapCategory = (categories = []) => {
@@ -31,7 +32,6 @@ function Discoveries() {
         `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=1&client_id=${UNSPLASH_API_KEY}`
       );
       const data = await res.json();
-
       return (
         data.results?.[0]?.urls?.regular ||
         `https://source.unsplash.com/800x600/?${query}`
@@ -46,9 +46,7 @@ function Discoveries() {
       const res = await fetch(
         `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(place)}&apiKey=${GEO_API_KEY}`
       );
-
       const data = await res.json();
-
       if (data.features?.length > 0) {
         const coords = data.features[0].properties;
         return { lat: coords.lat, lon: coords.lon };
@@ -56,7 +54,6 @@ function Discoveries() {
     } catch (err) {
       console.error(err);
     }
-
     return null;
   };
 
@@ -64,16 +61,13 @@ function Discoveries() {
     const res = await fetch(
       `https://api.geoapify.com/v2/places?categories=tourism.sights,catering.restaurant,accommodation.hotel&filter=circle:${lon},${lat},5000&limit=3&apiKey=${GEO_API_KEY}`
     );
-
     const data = await res.json();
-
     if (!data.features) return [];
 
     return Promise.all(
       data.features.map(async (item, index) => {
         const props = item.properties;
         const name = props.name || props.formatted || label;
-
         return {
           id: `${label}-${index}`,
           title: name,
@@ -90,15 +84,14 @@ function Discoveries() {
   };
 
   const loadRecommended = async () => {
+    setLoading(true);
     setIsRecommended(true);
 
     try {
       const results = await Promise.all(
         RECOMMENDED_PLACES.map(async (place) => {
           const geo = await geocodePlace(place);
-
           if (!geo) return [];
-
           return fetchPlacesAt(geo.lat, geo.lon, place);
         })
       );
@@ -107,22 +100,23 @@ function Discoveries() {
     } catch (err) {
       console.error(err);
       setDiscoveries([]);
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchDiscoveries = async (query = "") => {
+    setLoading(true);
     setIsRecommended(false);
 
     try {
       const geo = await geocodePlace(query);
-
       const lat = geo?.lat ?? 14.6;
       const lon = geo?.lon ?? 121.0;
 
       const res = await fetch(
         `https://api.geoapify.com/v2/places?categories=tourism.sights,catering.restaurant,accommodation.hotel&filter=circle:${lon},${lat},5000&limit=12&apiKey=${GEO_API_KEY}`
       );
-
       const data = await res.json();
 
       if (!data.features) {
@@ -134,7 +128,6 @@ function Discoveries() {
         data.features.map(async (item, index) => {
           const props = item.properties;
           const name = props.name || props.formatted || "Unknown Place";
-
           return {
             id: index,
             title: name,
@@ -153,16 +146,19 @@ function Discoveries() {
     } catch (err) {
       console.error(err);
       setDiscoveries([]);
+    } finally {
+      setLoading(false);
     }
   };
+
 
   useEffect(() => {
     loadRecommended();
   }, []);
 
+
   const handleSearch = (e) => {
     e.preventDefault();
-
     if (searchTerm.trim()) {
       fetchDiscoveries(searchTerm);
     } else {
@@ -185,7 +181,6 @@ function Discoveries() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-
         <button type="submit">Search</button>
       </form>
 
@@ -200,38 +195,34 @@ function Discoveries() {
           </button>
         ))}
       </div>
-
       <p className="section-label">
-        {isRecommended
-          ? "Recommended Places"
-          : `Results for "${searchTerm}"`}
+        {isRecommended ? " Recommended Places" : ` Results for "${searchTerm}"`}
       </p>
-
-      <div className="discoveries-grid">
-        {filteredDiscoveries.map((d) => (
-          <div className="discovery-card" key={d.id}>
-            <img src={d.image} alt={d.title} />
-
-            <div className="card-body">
-              <h3>{d.title}</h3>
-
-              <p className="location">{d.location}</p>
-
-              <p className="description">{d.description}</p>
-
-              <p className="rating">Ratings: {d.rating}</p>
-
-              <a
-                href={`https://www.google.com/maps?q=${d.lat},${d.lon}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                View on Map
-              </a>
+      
+      {loading ? (
+        <p className="loading">Loading...</p>
+      ) : (
+        <div className="discoveries-grid">
+          {filteredDiscoveries.map((d) => (
+            <div className="discovery-card" key={d.id}>
+              <img src={d.image} alt={d.title} />
+              <div className="card-body">
+                <h3>{d.title}</h3>
+                <p className="location"> {d.location}</p>
+                <p className="description">{d.description}</p>
+                <p className="rating">Ratings: {d.rating}</p>
+                <a
+                  href={`https://www.google.com/maps?q=${d.lat},${d.lon}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  View on Map
+                </a>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </main>
   );
 }
