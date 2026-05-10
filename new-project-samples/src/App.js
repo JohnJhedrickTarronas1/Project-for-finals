@@ -4,6 +4,7 @@ import Home from "./Components/Home";
 import Discoveries from "./Components/Discoveries";
 import Weather from "./Components/Weather";
 import Converter from "./Components/Converter";
+import "./App.css";
 
 function App() {
   return (
