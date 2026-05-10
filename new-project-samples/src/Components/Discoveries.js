@@ -1,43 +1,34 @@
-import React, { useState } from "react";
-import "./Discoveries.css";
+import { useState, useEffect } from "react";
+
+const GEO_API_KEY = process.env.REACT_APP_GEOAPIFY_KEY;
+const UNSPLASH_API_KEY = process.env.REACT_APP_UNSPLASH_KEY;
+
+const RECOMMENDED_PLACES = ["Boracay", "Palawan", "Siargao",
+  "Bohol", "Cebu", "Batanes"];
 
 function Discoveries() {
-  const [search, setSearch] = useState("");
-  const [error, setError] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [discoveries, setDiscoveries] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [isRecommended, setIsRecommended] = useState(true);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!search.trim()) {
-      setError("Please enter a search term");
-      return;
-    }
-
-    setError("");
-    console.log(search);
+  const mapCategory = (categories = []) => {
+    if (categories.some((c)) => c.includes("tourism"))) return "Tourist Spots";
+    if (categories.some((c)) => c.includes("catering"))) return "Restaurant";
+    if (categories.some((c)) => c.includes("accomodation"))) return "Hotels";
+    return "Other";
   };
 
-  return (
-    <div className="discoveries-container">
-      <h1>Discover Amazing Places</h1>
+  const fetchUnsplashImage = async (query) => {
+    try {
+      const res = await fetch(
+        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=1&client_id=${UNSPLASH_API_KEY}`
+      );
+    } catch {
+      return `https://source.unsplash.com/800x600/?${query}`;
+    }
+  };
 
-      <form onSubmit={handleSubmit} className="search-form">
-        <input 
-          type="text"
-          placeholder="Search"
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            if (error) setError("");
-          }}
-          className="search-input"
-        />
-        <button type="submit" className="search-button">Search</button>
-      </form>
-
-      {error && <p className="error-text">{error}</p>}
-    </div>
-  );
-}
-
+  
 export default Discoveries;
