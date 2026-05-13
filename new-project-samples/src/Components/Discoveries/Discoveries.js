@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "./Discoveries.css";
 
 const GEO_API_KEY = process.env.REACT_APP_GEOAPIFY_KEY;
@@ -53,6 +53,7 @@ function Discoveries() {
           query
         )}&per_page=1&client_id=${UNSPLASH_API_KEY}`
       );
+
       const data = await res.json();
 
       return (
@@ -71,32 +72,39 @@ function Discoveries() {
           place
         )}&apiKey=${GEO_API_KEY}`
       );
+
       const data = await res.json();
 
       if (data.features?.length > 0) {
         const coords = data.features[0].properties;
-        return { lat: coords.lat, lon: coords.lon };
+
+        return {
+          lat: coords.lat,
+          lon: coords.lon,
+        };
       }
     } catch (err) {
       console.error(err);
     }
+
     return null;
   };
 
-  const fetchPlacesAt = async (lat, lon, label) => {
+  const fetchPlacesAt = useCallback(async (lat, lon, label) => {
     const res = await fetch(
       `https://api.geoapify.com/v2/places?categories=tourism.sights,catering.restaurant,accommodation.hotel&filter=circle:${lon},${lat},5000&limit=3&apiKey=${GEO_API_KEY}`
     );
+  
     const data = await res.json();
-
+  
     if (!data.features) return [];
-
+  
     return Promise.all(
       data.features.map(async (item, index) => {
         const props = item.properties;
         const name = props.name || props.formatted || label;
         const category = mapCategory(props.categories);
-
+  
         return {
           id: `${label}-${index}`,
           title: name,
@@ -110,9 +118,10 @@ function Discoveries() {
         };
       })
     );
-  };
+  }, []);
 
-  const loadRecommended = async () => {
+  /* FIXED WARNING HERE */
+  const loadRecommended = useCallback(async () => {
     setLoading(true);
     setIsRecommended(true);
 
@@ -120,7 +129,9 @@ function Discoveries() {
       const results = await Promise.all(
         RECOMMENDED_PLACES.map(async (place) => {
           const geo = await geocodePlace(place);
+
           if (!geo) return [];
+
           return fetchPlacesAt(geo.lat, geo.lon, place);
         })
       );
@@ -132,7 +143,7 @@ function Discoveries() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [fetchPlacesAt]);
 
   const fetchDiscoveries = async (query = "") => {
     setLoading(true);
@@ -140,12 +151,14 @@ function Discoveries() {
 
     try {
       const geo = await geocodePlace(query);
+
       const lat = geo?.lat ?? 14.6;
       const lon = geo?.lon ?? 121.0;
 
       const res = await fetch(
         `https://api.geoapify.com/v2/places?categories=tourism.sights,catering.restaurant,accommodation.hotel&filter=circle:${lon},${lat},5000&limit=12&apiKey=${GEO_API_KEY}`
       );
+
       const data = await res.json();
 
       if (!data.features) {
@@ -182,12 +195,14 @@ function Discoveries() {
     }
   };
 
+  /* FIXED WARNING HERE */
   useEffect(() => {
     loadRecommended();
-  }, []);
+  }, [loadRecommended]);
 
   const handleSearch = (e) => {
     e.preventDefault();
+
     if (searchTerm.trim()) {
       fetchDiscoveries(searchTerm);
     } else {
@@ -210,6 +225,7 @@ function Discoveries() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+
         <button type="submit">Search</button>
       </form>
 
@@ -241,8 +257,11 @@ function Discoveries() {
 
               <div className="card-body">
                 <h3>{d.title}</h3>
+
                 <p className="location">{d.location}</p>
+
                 <p className="description">{d.description}</p>
+
                 <p className="rating">Ratings: {d.rating}</p>
 
                 <a
