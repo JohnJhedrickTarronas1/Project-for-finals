@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react';
+
 export default function DreamVacationApp() {
   const destinations = [
     {
@@ -17,39 +19,60 @@ export default function DreamVacationApp() {
     },
   ];
 
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+
+    const interval = setInterval(() => {
+      if (!container) return;
+
+      const scrollAmount = 280;
+
+      if (
+        container.scrollLeft + container.clientWidth >=
+        container.scrollWidth - 5
+      ) {
+        container.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      }
+    }, 2500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Styles
   const headerStyle = {
     width: '100%',
-    backgroundColor: '#d7f2ef',
+    boxSizing: 'border-box',
+    backgroundColor: 'rgba(215,242,239,0.85)',
     borderBottom: '2px solid violet',
-    padding: '16px 24px',
+    padding: 'clamp(8px, 2vw, 16px) clamp(12px, 3vw, 24px)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
   };
 
   const navStyle = {
     display: 'flex',
-    gap: '40px',
+    gap: 'clamp(16px, 4vw, 40px)',
     textTransform: 'uppercase',
     letterSpacing: '2px',
-    fontSize: '14px',
+    fontSize: 'clamp(12px, 2vw, 16px)',
+    fontWeight: '600',
+    color: '#333',
+  };
+
+  const navLinkStyle = {
+    textDecoration: 'none',
     color: '#333',
   };
 
   const heroStyle = {
     position: 'relative',
-    height: 'calc(100vh - 80px)',
+    minHeight: 'calc(100vh - 80px)',
     overflow: 'hidden',
-  };
-
-  const backgroundStyle = {
-    position: 'absolute',
-    inset: 0,
-    backgroundImage:
-      "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop')",
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
   };
 
   const overlayStyle = {
@@ -64,9 +87,8 @@ export default function DreamVacationApp() {
     top: '50%',
     transform: 'translateY(-50%)',
     backgroundColor: '#99f4ec',
-    padding: '20px 8px',
+    padding: 'clamp(12px, 2vw, 20px) 8px',
     borderRadius: '0 16px 16px 0',
-    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
@@ -76,17 +98,18 @@ export default function DreamVacationApp() {
   const heroContentStyle = {
     position: 'relative',
     zIndex: 10,
-    height: '100%',
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '0 40px',
+    justifyContent: 'center',
+    padding: 'clamp(16px, 5vw, 40px)',
+    gap: '40px',
+    boxSizing: 'border-box',
   };
 
   const textStyle = {
-    maxWidth: '600px',
+    textAlign: 'center',
     color: '#000',
-    marginTop: '-80px',
   };
 
   const buttonStyle = {
@@ -97,115 +120,133 @@ export default function DreamVacationApp() {
     color: '#fff',
     fontWeight: 'bold',
     cursor: 'pointer',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
   };
 
   const cardContainerStyle = {
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'row',
     gap: '20px',
     backgroundColor: 'rgba(255,255,255,0.25)',
     backdropFilter: 'blur(8px)',
     padding: '20px',
     borderRadius: '32px',
     boxShadow: '0 8px 16px rgba(0,0,0,0.3)',
-    marginRight: '16px',
+    boxSizing: 'border-box',
+    overflowX: 'auto',
+    scrollBehavior: 'smooth',
   };
 
   const cardStyle = {
     position: 'relative',
-    width: '256px',
-    height: '144px',
+    width: '260px',
+    height: '160px',
     borderRadius: '16px',
     overflow: 'hidden',
     cursor: 'pointer',
+    flexShrink: 0,
+  };
+
+  const iconStyle = {
+    width: '24px',
+    height: '24px',
+    borderRadius: '50%',
+    backgroundColor: '#fff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '12px',
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#e8f7f5', fontFamily: 'sans-serif' }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        width: '100%',
+        overflowX: 'hidden',
+        fontFamily: 'sans-serif',
+        backgroundImage:
+          "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
       {/* Header */}
       <header style={headerStyle}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              border: '1px solid black',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '14px',
-              fontWeight: 'bold',
-              transform: 'rotate(45deg)',
-            }}
-          >
-            ✦
-          </div>
-        </div>
+        <div>✦</div>
 
         <nav style={navStyle}>
-          <a href="#">Home</a>
-          <a href="#">Map</a>
-          <a href="#">Itinerary</a>
+          <a href="#" style={navLinkStyle}>Home</a>
+          <a href="#" style={navLinkStyle}>Map</a>
+          <a href="#" style={navLinkStyle}>Itinerary</a>
         </nav>
 
+        {/* 🔥 NEW SEARCH BAR */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: '#fff',
-            border: '1px solid #666',
+            gap: '8px',
+            background: 'rgba(255,255,255,0.6)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(0,0,0,0.1)',
             borderRadius: '9999px',
-            padding: '4px 12px',
-            width: '160px',
-            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)',
+            padding: '6px 10px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
           }}
         >
           <input
             type="text"
-            placeholder="Search"
+            placeholder="Search destinations..."
             style={{
               background: 'transparent',
               outline: 'none',
-              fontSize: '14px',
-              flex: 1,
               border: 'none',
+              fontSize: '14px',
+              padding: '6px 10px',
+              width: '140px',
+              color: '#333',
             }}
           />
-          <span style={{ color: '#666' }}>⌕</span>
+
+          <button
+            style={{
+              backgroundColor: '#000',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '9999px',
+              padding: '6px 14px',
+              fontSize: '13px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+            }}
+            onMouseEnter={(e) => (e.target.style.backgroundColor = '#333')}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = '#000')}
+          >
+            Search
+          </button>
         </div>
       </header>
 
-      {/* Hero Section */}
+      {/* Hero */}
       <main style={heroStyle}>
-        <div style={backgroundStyle} />
         <div style={overlayStyle} />
 
-        {/* Social Sidebar */}
         <div style={sidebarStyle}>
-          <a href="#" style={{ ...iconStyle }}>f</a>
-          <a href="#" style={{ ...iconStyle }}>t</a>
-          <a href="#" style={{ ...iconStyle }}>◎</a>
-          <a href="#" style={{ ...iconStyle }}>✉</a>
+          <div style={iconStyle}>f</div>
+          <div style={iconStyle}>t</div>
+          <div style={iconStyle}>◎</div>
         </div>
 
-        {/* Main Content */}
         <div style={heroContentStyle}>
-          {/* Left Text */}
           <div style={textStyle}>
-            <p style={{ fontSize: '64px', fontWeight: 300, lineHeight: '1.2' }}>Your Dream</p>
-            <h1 style={{ fontSize: '80px', fontWeight: 900, textTransform: 'uppercase' }}>
-              Vacation
-            </h1>
-            <p style={{ marginTop: '24px', fontSize: '18px', color: '#333', maxWidth: '400px' }}>
-              Discover tropical escapes, breathtaking mountains, and unforgettable adventures around the world.
-            </p>
+            <p style={{ fontSize: '48px' }}>Your Dream</p>
+            <h1 style={{ fontSize: '64px' }}>VACATION</h1>
             <button style={buttonStyle}>Explore Now</button>
           </div>
 
-          {/* Destination Cards */}
-          <div style={cardContainerStyle}>
+          {/* CAROUSEL */}
+          <div style={cardContainerStyle} ref={scrollRef}>
             {destinations.map((place, index) => (
               <div key={index} style={cardStyle}>
                 <img
@@ -215,7 +256,6 @@ export default function DreamVacationApp() {
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    transition: 'transform 0.5s',
                   }}
                 />
                 <div
@@ -232,8 +272,6 @@ export default function DreamVacationApp() {
                     left: '16px',
                     color: '#fff',
                     fontWeight: '600',
-                    fontSize: '18px',
-                    textShadow: '0 2px 4px rgba(0,0,0,0.5)',
                   }}
                 >
                   {place.title}
@@ -246,15 +284,3 @@ export default function DreamVacationApp() {
     </div>
   );
 }
-
-const iconStyle = {
-  width: '24px',
-  height: '24px',
-  borderRadius: '50%',
-  backgroundColor: '#fff',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontSize: '12px',
-  cursor: 'pointer',
-};
