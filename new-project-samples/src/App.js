@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./Components/Navbar";
-import Home from "./Components/Home";
-import Discoveries from "./Components/Discoveries";
-import Weather from "./Components/Weather";
-import Converter from "./Components/Converter";
+import Home from "./Components/Home/Home";
+import Discoveries from "./Components/Discoveries/Discoveries";
+import Weather from "./Components/Weather/Weather";
+import Converter from "./Components/Converter/Converter";
 import "./App.css";
 
 function App() {
