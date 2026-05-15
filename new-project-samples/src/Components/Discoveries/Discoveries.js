@@ -13,7 +13,6 @@ const RECOMMENDED_PLACES = [
   "Batanes",
 ];
 
-/* ------------------ SMART DESCRIPTION GENERATOR ------------------ */
 const generateDescription = (name, props, category) => {
   if (props?.formatted) return props.formatted;
 
@@ -120,7 +119,6 @@ function Discoveries() {
     );
   }, []);
 
-  /* FIXED WARNING HERE */
   const loadRecommended = useCallback(async () => {
     setLoading(true);
     setIsRecommended(true);
@@ -195,7 +193,6 @@ function Discoveries() {
     }
   };
 
-  /* FIXED WARNING HERE */
   useEffect(() => {
     loadRecommended();
   }, [loadRecommended]);
