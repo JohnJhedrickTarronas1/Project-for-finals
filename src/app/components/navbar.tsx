@@ -12,10 +12,10 @@ export default function Navbar({}: Props) {
   return (
     <nav className="shadow-sm sticky top-0 left-0 z-50 bg-white">
       <div className="h-[80px] w-full flex justify-between items-center max-w-7x1 px-3 mx-auto>">
-        <p className="flex items-center gap-2">
+        <p className="flex items-center gap-2"> </p>
           <h2 className="text-xl font-bold">Weather</h2>
           <MdWbSunny size={32} color="#facc15" />
-        </p>
+    
 
         <section className="flex gap-2 items-center">
           <MdMyLocation size={24} color="#575757" />
