@@ -2,6 +2,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import './App.css';
 import "./Components/Discoveries/Discoveries.js";
+import Weather from "./Components/Weather/Weather.js";
 
 /* ================= HOME PAGE ================= */
 
@@ -57,6 +58,7 @@ function DreamVacationApp() {
           <a href="#">Home</a>
           <a href="#">Map</a>
           <a href="#">Itinerary</a>
+          <a href="/weather">Weather</a>
         </nav>
 
         <div className="search-bar">
@@ -129,6 +131,7 @@ function App() {
     <Routes>
       <Route path="/" element={<DreamVacationApp />} />
       <Route path="/discoveries" element={<Discoveries />} />
+      <Route path="/weather" element={<Weather />} />
     </Routes>
   );
 }
