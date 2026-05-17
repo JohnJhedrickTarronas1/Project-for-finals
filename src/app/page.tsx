@@ -1,85 +1,160 @@
-'use client'
+"use client";
 
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "./components/navbar";
-import Image from "next/image";
 import axios from "axios";
-
-// https://api.openweathermap.org/data/2.5/weather?q=Philippines&appid=5273a2e1f3ee2ee5bed4700944f825af
+import WeatherIcon from "./components/WeatherIcon";
+import WeatherDetails from "./components/WeatherDetails";
+import { convertKelvinToCelsius } from "./utils/convertKelvinToCelsius";
 
 type WeatherData = {
-  coord: {
-    lon: number;
-    lat: number;
-  };
-
   weather: {
-    id: number;
     main: string;
     description: string;
     icon: string;
   }[];
 
-  base: string;
-
   main: {
     temp: number;
     feels_like: number;
-    temp_min: number;
-    temp_max: number;
     pressure: number;
     humidity: number;
-    sea_level: number;
-    grnd_level: number;
   };
 
   visibility: number;
 
   wind: {
     speed: number;
-    deg: number;
-    gust: number;
   };
-
-  clouds: {
-    all: number;
-  };
-
-  dt: number;
 
   sys: {
-    country: string;
     sunrise: number;
     sunset: number;
   };
 
-  timezone: number;
-  id: number;
   name: string;
-  cod: number;
 };
 
 export default function Home() {
+  const [location, setLocation] = useState("Lucena");
+  const [search, setSearch] = useState("Lucena");
+
   const { isLoading, error, data } = useQuery<WeatherData>({
-    queryKey: ['weather'],
+    queryKey: ["weather", location],
+
     queryFn: async () => {
-      const response = await axios.get<WeatherData>(
-        `https://api.openweathermap.org/data/2.5/weather?q=Philippines&appid=${process.env.NEXT_PUBLIC_WEATHER_KEY}`
-      )
-      return response.data
+      const response = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${process.env.NEXT_PUBLIC_WEATHER_KEY}`
+      );
+
+      return response.data;
     },
   });
 
-  console.log("data", data?.sys.country)
-  
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-  if (isLoading) return 'Loading...'
-  if (error) return 'Error loading weather'
-  
+    if (search.trim() !== "") {
+      setLocation(search);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-3xl font-bold">
+        Loading Weather...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-red-500 text-3xl font-bold">
+        Failed to load weather.
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col gap-4 bg-gray-100 min-h-screen">
-      <Navbar />
-      <div>{data?.name}</div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-500 to-blue-700">
+
+      <Navbar
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        onSubmit={handleSubmit}
+      />
+
+      <main className="max-w-6xl mx-auto px-6 py-10">
+
+        <div className="bg-white rounded-3xl shadow-2xl p-10">
+
+          {/* TOP SECTION */}
+          <div className="flex flex-col md:flex-row justify-between items-center">
+
+            {/* LEFT */}
+            <div className="space-y-3">
+
+              <h1 className="text-6xl font-bold text-blue-700">
+                {data?.name}
+              </h1>
+
+              <p className="text-2xl text-gray-700">
+                {data?.weather[0].main}
+              </p>
+
+              <p className="capitalize text-lg text-gray-500">
+                {data?.weather[0].description}
+              </p>
+
+              <div className="pt-6">
+                <span className="text-8xl font-bold text-gray-800">
+                  {convertKelvinToCelsius(data?.main.temp ?? 0)}°
+                </span>
+              </div>
+
+              <p className="text-xl text-gray-500">
+                Feels like{" "}
+                {convertKelvinToCelsius(
+                  data?.main.feels_like ?? 0
+                )}
+                °
+              </p>
+            </div>
+
+            {/* RIGHT */}
+            <div className="flex flex-col items-center">
+
+              <WeatherIcon
+                iconName={data?.weather[0].icon ?? "01d"}
+                className="scale-150"
+              />
+
+            </div>
+          </div>
+
+          {/* WEATHER DETAILS */}
+          <div className="mt-16">
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+
+              <WeatherDetails
+                visibility={`${data?.visibility} m`}
+                humidity={`${data?.main.humidity}%`}
+                windSpeed={`${data?.wind.speed} km/h`}
+                airPressure={`${data?.main.pressure} hPa`}
+                sunrise={new Date(
+                  (data?.sys.sunrise ?? 0) * 1000
+                ).toLocaleTimeString()}
+                sunset={new Date(
+                  (data?.sys.sunset ?? 0) * 1000
+                ).toLocaleTimeString()}
+              />
+
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
-  )
+  );
 }
