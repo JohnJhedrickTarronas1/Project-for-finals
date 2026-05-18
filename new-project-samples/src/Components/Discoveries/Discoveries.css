@@ -1,264 +1,207 @@
-/* SEARCH CONTAINER */
-.discoveries-search {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 28px;
-  flex-wrap: wrap;
-}
-
-/* INPUT FIELD */
-.discoveries-search input {
-  width: 240px;
-  max-width: 100%;
-  padding: 14px 230px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  outline: none;
-  font-size: 15px;
-/* MAIN SECTION */
+/* ================= DISCOVERIES PAGE WRAPPER ================= */
 .discoveries {
   min-height: 100vh;
   width: 100%;
-  padding: 40px 20px;
-  font-family: sans-serif;
-
-  background-image: url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop");
-  background-size: cover;
-  background-position: center;
-
+  
+  /* FIX: 140px Top Padding ensures heading elements drop cleanly under the floating navbar */
+  padding: 140px 20px 60px 20px; 
+  
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-family: sans-serif;
+  box-sizing: border-box;
+
+  /* Background configuration setup */
+  background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  position: relative;
+  
+  /* Must sit underneath the navbar layer stack tracking priority */
+  z-index: 1; 
 }
 
-/* TITLE */
+/* Ambient Dark Film Cover */
+.discoveries::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: -1;
+}
+
+/* ================= LAYOUT TITLE HEADER ================= */
 .discoveries h1 {
-  font-size: clamp(40px, 6vw, 70px);
+  font-size: 42px;
+  font-weight: 800;
   color: white;
-  margin-bottom: 20px;
-  text-align: center;
+  margin: 0 0 20px 0;
+  letter-spacing: 1px;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
-/* SEARCH BAR (LIKE YOUR SAMPLE) */
+/* ================= CENTRAL SEARCH BAR MODULE ================= */
 .discoveries-search {
   display: flex;
+  gap: 10px;
   align-items: center;
-  gap: 8px;
-
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(12px);
-
+  -webkit-backdrop-filter: blur(12px);
+  padding: 10px 14px;
   border-radius: 9999px;
-  padding: 8px 12px;
-  margin-bottom: 20px;
-
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  margin-bottom: 25px;
 }
 
 .discoveries-search input {
-  background: transparent;
   border: none;
   outline: none;
+  background: transparent;
   font-size: 14px;
-  padding: 6px 10px;
-  width: 200px;
+  width: 250px;
+  padding: 8px;
+  color: white;
+}
+
+.discoveries-search input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .discoveries-search button {
-  background-color: black;
-  color: white;
   border: none;
+  padding: 8px 14px;
   border-radius: 9999px;
-  padding: 8px 16px;
-  font-size: 13px;
+  background: black;
+  color: white;
   font-weight: 600;
   cursor: pointer;
+  transition: background 0.3s ease;
 }
 
 .discoveries-search button:hover {
-  background-color: #333;
+  background: #333;
 }
 
-/* FILTER BUTTONS */
+/* ================= FILTER CATEGORY PILLS ================= */
 .filter-buttons {
   display: flex;
   gap: 12px;
+  margin-bottom: 25px;
   flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: 16px;
 }
 
 .filter-buttons button {
   padding: 8px 16px;
   border-radius: 9999px;
-  border: none;
-  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.15);
   cursor: pointer;
-  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.filter-buttons button:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .filter-buttons .active {
-  background: black;
-  color: white;
+  background: white;
+  color: black;
+  border: none;
 }
 
-/* LABEL */
+/* Section Label Accent */
 .section-label {
-  margin-bottom: 20px;
+  margin: 10px 0 25px;
+  font-size: 18px;
   font-weight: 600;
   color: white;
 }
 
-/* GRID (GLASS CONTAINER LIKE CARD SCROLLER) */
+/* ================= SCALED DISPLAY GRID ================= */
 .discoveries-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
-
+  /* Min width increased to 320px to widen cards and fill layout spaces beautifully */
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
   width: 100%;
-  max-width: 1100px;
-
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
-
-  padding: 20px;
-  border-radius: 32px;
-
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  max-width: 1400px;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
-/* CARD */
+/* ================= LARGE GRID DISPLAY CARD ================= */
 .discovery-card {
-  background: white;
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 24px;
   overflow: hidden;
-  cursor: pointer;
-
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
-
-  transition: 0.3s;
+  color: white;
+  width: 100%;
 }
 
 .discovery-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-8px);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.45);
 }
 
-/* IMAGE */
+/* Responsive Image Area Dimensions */
 .discovery-card img {
   width: 100%;
-  height: 160px;
+  height: 240px; 
   object-fit: cover;
 }
 
-/* BODY */
+/* Card Information Body Frame */
 .card-body {
-  padding: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-grow: 1;
 }
 
 .card-body h3 {
-  font-size: 18px;
-  margin-bottom: 6px;
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
 }
 
-.location {
-  font-size: 13px;
-  color: #555;
-  margin-bottom: 6px;
-}
-
-.description {
-  font-size: 13px;
-  color: #666;
-  margin-bottom: 10px;
-}
-
+.location,
+.description,
 .rating {
   font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.9);
 }
 
-/* BUTTON */
+/* Map Route Links Button Elements */
 .card-body a {
-  display: inline-block;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  background: black;
-  color: white;
+  margin-top: auto; /* Aligns all actionable components perfectly along card bases */
   text-decoration: none;
-  font-size: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  color: black;
+  background: white;
+  padding: 10px 16px;
+  border-radius: 9999px;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .card-body a:hover {
-  background: #333;
-}
-
-/* LOADING */
-.loading {
-  color: white;
-  font-size: 18px;
-  margin-top: 30px;
-}
-
-/* MOBILE */
-@media (max-width: 768px) {
-  .discoveries h1 {
-    font-size: 36px;
-  }
-
-  .discoveries-search input {
-    width: 140px;
-  }
-
-  .discoveries-grid {
-    grid-template-columns: 1fr;
-  }
-}
-  color: #fff;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(12px);
-
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-}
-
-/* PLACEHOLDER */
-.discoveries-search input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-/* FOCUS EFFECT */
-.discoveries-search input:focus {
-  border-color: rgba(255, 255, 255, 0.6);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15),
-              0 6px 20px rgba(0, 0, 0, 0.3);
-}
-
-/* BUTTON */
-.discoveries-search button {
-  padding: 14px 24px;
-  border-radius: 999px;
-  border: none;
-
-  background: linear-gradient(135deg, #000, #333);
-  color: white;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-  transition: all 0.3s ease;
-}
-
-/* BUTTON HOVER */
-.discoveries-search button:hover {
-  transform: translateY(-2px) scale(1.05);
-  background: linear-gradient(135deg, #111, #444);
-}
-
-/* BUTTON ACTIVE CLICK */
-.discoveries-search button:active {
-  transform: scale(0.96);
+  background: #f0f0f0;
+  transform: scale(1.02);
 }

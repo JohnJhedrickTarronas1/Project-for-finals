@@ -36,7 +36,6 @@ function Discoveries() {
   const [searchTerm, setSearchTerm] = useState("");
   const [discoveries, setDiscoveries] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isRecommended, setIsRecommended] = useState(true);
 
   const mapCategory = (categories = []) => {
     if (categories.some((c) => c.includes("tourism"))) return "Tourist Spots";
@@ -76,11 +75,7 @@ function Discoveries() {
 
       if (data.features?.length > 0) {
         const coords = data.features[0].properties;
-
-        return {
-          lat: coords.lat,
-          lon: coords.lon,
-        };
+        return { lat: coords.lat, lon: coords.lon };
       }
     } catch (err) {
       console.error(err);
@@ -93,17 +88,16 @@ function Discoveries() {
     const res = await fetch(
       `https://api.geoapify.com/v2/places?categories=tourism.sights,catering.restaurant,accommodation.hotel&filter=circle:${lon},${lat},5000&limit=3&apiKey=${GEO_API_KEY}`
     );
-  
+
     const data = await res.json();
-  
     if (!data.features) return [];
-  
+
     return Promise.all(
       data.features.map(async (item, index) => {
         const props = item.properties;
         const name = props.name || props.formatted || label;
         const category = mapCategory(props.categories);
-  
+
         return {
           id: `${label}-${index}`,
           title: name,
@@ -121,15 +115,12 @@ function Discoveries() {
 
   const loadRecommended = useCallback(async () => {
     setLoading(true);
-    setIsRecommended(true);
 
     try {
       const results = await Promise.all(
         RECOMMENDED_PLACES.map(async (place) => {
           const geo = await geocodePlace(place);
-
           if (!geo) return [];
-
           return fetchPlacesAt(geo.lat, geo.lon, place);
         })
       );
@@ -143,9 +134,8 @@ function Discoveries() {
     }
   }, [fetchPlacesAt]);
 
-  const fetchDiscoveries = async (query = "") => {
+  const fetchDiscoveries = useCallback(async (query = "") => {
     setLoading(true);
-    setIsRecommended(false);
 
     try {
       const geo = await geocodePlace(query);
@@ -191,11 +181,21 @@ function Discoveries() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadRecommended();
   }, [loadRecommended]);
+
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      if (searchTerm.trim()) {
+        fetchDiscoveries(searchTerm);
+      }
+    }, 700);
+
+    return () => clearTimeout(delay);
+  }, [searchTerm, fetchDiscoveries]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -218,12 +218,18 @@ function Discoveries() {
       <form className="discoveries-search" onSubmit={handleSearch}>
         <input
           type="text"
-          placeholder="Search places (e.g. Tokyo, Cebu, Paris)..."
+          placeholder="Search places..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
 
         <button type="submit">Search</button>
+        <button type="button" onClick={() => {
+          setSearchTerm("");
+          loadRecommended();
+        }}>
+          Clear
+        </button>
       </form>
 
       <div className="filter-buttons">
@@ -239,9 +245,9 @@ function Discoveries() {
       </div>
 
       <p className="section-label">
-        {isRecommended
-          ? "Recommended Places"
-          : `Results for "${searchTerm}"`}
+        {searchTerm.trim()
+          ? `Results for "${searchTerm}"`
+          : "Recommended Places"}
       </p>
 
       {loading ? (
@@ -251,14 +257,10 @@ function Discoveries() {
           {filteredDiscoveries.map((d) => (
             <div className="discovery-card" key={d.id}>
               <img src={d.image} alt={d.title} />
-
               <div className="card-body">
                 <h3>{d.title}</h3>
-
                 <p className="location">{d.location}</p>
-
                 <p className="description">{d.description}</p>
-
                 <p className="rating">Ratings: {d.rating}</p>
 
                 <a
@@ -277,4 +279,4 @@ function Discoveries() {
   );
 }
 
-export default Discoveries;
+export default Discoveries; 

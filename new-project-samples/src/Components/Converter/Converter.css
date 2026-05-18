@@ -24,26 +24,19 @@
   --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
+/* Base rules applied specifically to the converter page wrappers to avoid global conflicts */
+.converter-page-wrapper {
   font-family: 'DM Sans', sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
-}
-
-.app {
-  min-height: 100vh;
-  background: var(--bg);
-  color: var(--text);
   display: flex;
   flex-direction: column;
   position: relative;
   overflow-x: hidden;
 }
 
-.header, .converter-card, .stat-card, .filters-bar, .table-wrap {
+.converter-header, .converter-card, .stat-card, .filters-bar, .table-wrap {
   backdrop-filter: blur(24px) saturate(130%);
   -webkit-backdrop-filter: blur(24px) saturate(130%);
 }
@@ -63,7 +56,8 @@ body {
   background-repeat: no-repeat;
 }
 
-.header {
+/* If you use a secondary header inside the converter page */
+.converter-header {
   position: relative;
   z-index: 10;
   display: flex;
@@ -165,11 +159,13 @@ body {
 }
 .tab:hover { color: var(--text); }
 
+/* ================= THE NAVBAR OVERLAP FIX ================= */
 .main {
   position: relative;
   z-index: 10;
   flex: 1;
-  padding: 28px 32px;
+  /* 🛠️ ADDED: padding-top: 120px so your grid drops safely below the main Navbar! */
+  padding: 120px 32px 28px 32px !important; 
   max-width: 1100px;
   margin: 0 auto;
   width: 100%;
@@ -629,8 +625,8 @@ body {
 .footer a:hover { text-decoration: underline; }
 
 @media (max-width: 700px) {
-  .header { padding: 14px 16px; }
-  .main { padding: 16px; }
+  .converter-header { padding: 14px 16px; }
+  .main { padding: 110px 16px 16px 16px !important; } /* Mobile clearance */
   .tabs { padding: 12px 16px 0; }
   .converter-grid { grid-template-columns: 1fr; }
   .swap-col { flex-direction: row; padding-top: 0; justify-content: center; }

@@ -140,6 +140,7 @@ function CurrencyDropdown({ value, onChange, rates, label, searchable = true }) 
             {filtered.map((c) => (
               <button
                 key={c}
+                type="button"
                 className={`dd-item ${c === value ? "active" : ""}`}
                 onClick={() => { onChange(c); setOpen(false); setSearch(""); }}
               >
@@ -156,7 +157,7 @@ function CurrencyDropdown({ value, onChange, rates, label, searchable = true }) 
   );
 }
 
-export default function App() {
+export default function Converter() {
   const [amount, setAmount] = useState("1");
   const [from, setFrom] = useState("USD");
   const [to, setTo] = useState("PHP");
@@ -228,34 +229,97 @@ export default function App() {
   const rate1 = rates[to] ? rates[to].toFixed(6) : "—";
 
   return (
-    <div className="app vacation-theme">
+    <div className="converter-page-container">
       <div className="vacation-backdrop"></div>
 
-      <header className="header">
-        <div className="header-left"></div>
-        <div className="header-right">
-          {lastUpdated && (
-            <span className="live-badge">
-              <span className="live-dot" />
-              LIVE · {lastUpdated.toLocaleTimeString()}
-            </span>
-          )}
-          <button className="refresh-btn" onClick={fetchRates} title="Refresh rates">
-            {loading ? "⟳" : "↺"}
-          </button>
+      <nav className="global-navbar" style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '70px',
+        background: '#e4ecea',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 40px',
+        zIndex: 1000,
+        boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
+      }}>
+        <div className="nav-logo" style={{ 
+          fontFamily: "'Syne', sans-serif", 
+          fontWeight: 800, 
+          fontSize: '22px', 
+          letterSpacing: '-0.5px',
+          color: '#1d2d44' 
+        }}>
+          TRAVEL BUDDY
         </div>
-      </header>
+        
+        <div className="nav-links" style={{ 
+          display: 'flex', 
+          gap: '30px',
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: '14px',
+          fontWeight: '600'
+        }}>
+          <a href="#home" style={{ color: '#4a5759', textDecoration: 'none' }}>HOME</a>
+          <a href="#discoveries" style={{ color: '#4a5759', textDecoration: 'none' }}>DISCOVERIES</a>
+          <a href="#weather" style={{ color: '#4a5759', textDecoration: 'none' }}>WEATHER</a>
+          <a href="#converter" style={{ color: '#0070ba', textDecoration: 'none', borderBottom: '2px solid #0070ba', paddingBottom: '4px' }}>CONVERTER</a>
+        </div>
 
-      <nav className="tabs">
-        <button className={`tab ${activeTab === "converter" ? "active" : ""}`} onClick={() => setActiveTab("converter")}>
-          ⇄ Converter
-        </button>
-        <button className={`tab ${activeTab === "index" ? "active" : ""}`} onClick={() => setActiveTab("index")}>
-          ☰ Rate Index
-        </button>
+        <div className="nav-search-box" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <input 
+            type="text" 
+            placeholder="Search destinations" 
+            style={{
+              padding: '6px 12px',
+              borderRadius: '20px',
+              border: '1px solid rgba(0,0,0,0.15)',
+              fontSize: '12px',
+              outline: 'none'
+            }} 
+          />
+          <button style={{
+            background: '#000',
+            color: '#fff',
+            border: 'none',
+            padding: '6px 14px',
+            borderRadius: '20px',
+            fontSize: '12px',
+            cursor: 'pointer'
+          }}>Search</button>
+        </div>
       </nav>
 
-      <main className="main">
+      <main className="converter-main-content">
+        <div className="converter-sub-header" style={{ borderBottom: 'none', background: 'transparent', padding: '10px 0 20px 0' }}>
+          <div className="header-left">
+            <span className="logo-text">Currency Desk</span>
+          </div>
+          <div className="header-right">
+            {lastUpdated && (
+              <span className="live-badge">
+                <span className="live-dot" />
+                LIVE · {lastUpdated.toLocaleTimeString()}
+              </span>
+            )}
+            <button className="refresh-btn" onClick={fetchRates} title="Refresh rates">
+              {loading ? "⟳" : "↺"}
+            </button>
+          </div>
+        </div>
+
+        <nav className="tabs" style={{ padding: '0 0 20px 0' }}>
+          <button className={`tab ${activeTab === "converter" ? "active" : ""}`} onClick={() => setActiveTab("converter")}>
+            ⇄ Converter
+          </button>
+          <button className={`tab ${activeTab === "index" ? "active" : ""}`} onClick={() => setActiveTab("index")}>
+            ☰ Rate Index
+          </button>
+        </nav>
+
         {activeTab === "converter" && (
           <div className="converter-section">
             <div className="popular-pairs">
@@ -316,7 +380,7 @@ export default function App() {
               <div className="quick-amounts">
                 <span className="pairs-label">Quick →</span>
                 {[1, 10, 50, 100, 500, 1000].map((q) => (
-                  <button key={q} className={`quick-chip ${amount == q ? "active" : ""}`} onClick={() => setAmount(String(q))}>
+                  <button key={q} className={`quick-chip ${amount === q ? "active" : ""}`} onClick={() => setAmount(String(q))}>
                     {q}
                   </button>
                 ))}
@@ -431,7 +495,14 @@ export default function App() {
                           <td className="rate-cell">{typeof rate === "number" ? rate.toFixed(4) : rate}</td>
                           <td className="rate-cell dim">{rateFromTo}</td>
                           <td>
-                            <button className="use-btn" onClick={(e) => { e.stopPropagation(); setTo(code); setActiveTab("converter"); }}>
+                            <button 
+                              className="use-btn" 
+                              onClick={(e) => { 
+                                e.stopPropagation(); 
+                                setTo(code); 
+                                setActiveTab("converter"); 
+                              }}
+                            >
                               Use →
                             </button>
                           </td>
@@ -449,10 +520,10 @@ export default function App() {
         )}
       </main>
 
-      <footer className="footer">
-        <span>Powered by <a href="https://www.frankfurter.app/" target="_blank" rel="noreferrer">Frankfurter API</a></span>
+      <footer className="converter-footer">
+        <span>Powered by <a href="https://v6.exchangerate-api.com/" target="_blank" rel="noreferrer">ExchangeRate-API</a></span>
         <span>·</span>
-        <span>Rates update every 60s</span>
+        <span>Rates update automatically</span>
         {lastUpdated && <span>· Last sync: {lastUpdated.toLocaleTimeString()}</span>}
       </footer>
     </div>
