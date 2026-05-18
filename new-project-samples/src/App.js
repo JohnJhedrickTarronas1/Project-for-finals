@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import './App.css';
 import "./Components/Discoveries/Discoveries.js";
 import Weather from "./Components/Weather/Weather.js";
+import Converter from "./Components/Converter/Converter.js";
 
 /* ================= HOME PAGE ================= */
 
@@ -132,6 +133,7 @@ function App() {
       <Route path="/" element={<DreamVacationApp />} />
       <Route path="/discoveries" element={<Discoveries />} />
       <Route path="/weather" element={<Weather />} />
+      <Route path="/converter" element={<Converter />} />
     </Routes>
   );
 }
