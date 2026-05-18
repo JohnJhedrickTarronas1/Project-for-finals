@@ -51,7 +51,6 @@ function Weather() {
 
         <h1 className="weather-title">Weather Forecast</h1>
 
-        {/* SEARCH */}
         <form className="weather-search" onSubmit={handleSubmit}>
           <input
             type="text"
@@ -67,10 +66,8 @@ function Weather() {
           <p className="loading-text">Loading weather...</p>
         ) : weather?.main ? (
           <>
-            {/* MAIN CARD */}
             <div className="weather-card">
 
-              {/* LEFT */}
               <div className="weather-main">
 
                 <h2>{weather.name}</h2>
@@ -93,7 +90,6 @@ function Weather() {
                 </p>
               </div>
 
-              {/* RIGHT */}
               <div className="weather-icon-container">
 
                 <img
@@ -105,7 +101,6 @@ function Weather() {
               </div>
             </div>
 
-            {/* DETAILS */}
             <div className="weather-details">
 
               <div className="detail-card">
@@ -155,5 +150,4 @@ function Weather() {
     </div>
   );
 }
-
 export default Weather;
