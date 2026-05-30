@@ -10,7 +10,7 @@ const CURRENCY_META = {
   CAD: { country: "ca", name: "Canadian Dollar", region: "Americas" },
   CHF: { country: "ch", name: "Swiss Franc", region: "Europe" },
   CNY: { country: "cn", name: "Chinese Yuan", region: "Asia" },
-  SEK: { country: "se", name: "Swedish Krona", region: "Europe" },
+ Swedish: { country: "se", name: "Swedish Krona", region: "Europe" },
   NZD: { country: "nz", name: "New Zealand Dollar", region: "Oceania" },
   MXN: { country: "mx", name: "Mexican Peso", region: "Americas" },
   SGD: { country: "sg", name: "Singapore Dollar", region: "Asia" },
@@ -229,7 +229,7 @@ export default function Converter() {
   const rate1 = rates[to] ? rates[to].toFixed(6) : "—";
 
   return (
-    <div className="converter-page-container">
+    <div className="converter-page-wrapper">
       <div className="vacation-backdrop"></div>
 
       <nav className="global-navbar" style={{
@@ -294,7 +294,7 @@ export default function Converter() {
       </nav>
 
       <main className="converter-main-content">
-        <div className="converter-sub-header" style={{ borderBottom: 'none', background: 'transparent', padding: '10px 0 20px 0' }}>
+        <div className="converter-header" style={{ borderBottom: 'none', background: 'transparent', padding: '10px 0 20px 0' }}>
           <div className="header-left">
             <span className="logo-text">Currency Desk</span>
           </div>
@@ -380,7 +380,7 @@ export default function Converter() {
               <div className="quick-amounts">
                 <span className="pairs-label">Quick →</span>
                 {[1, 10, 50, 100, 500, 1000].map((q) => (
-                  <button key={q} className={`quick-chip ${amount === q ? "active" : ""}`} onClick={() => setAmount(String(q))}>
+                  <button key={q} className={`quick-chip ${amount === String(q) ? "active" : ""}`} onClick={() => setAmount(String(q))}>
                     {q}
                   </button>
                 ))}

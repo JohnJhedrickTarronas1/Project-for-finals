@@ -12,13 +12,10 @@ function Weather() {
   const fetchWeather = async (location) => {
     try {
       setLoading(true);
-
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${API_KEY}`
       );
-
       const data = await response.json();
-
       setWeather(data);
     } catch (error) {
       console.error(error);
@@ -33,7 +30,6 @@ function Weather() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (search.trim()) {
       setCity(search);
     }
@@ -48,7 +44,6 @@ function Weather() {
       <div className="weather-overlay" />
 
       <div className="weather-container">
-
         <h1 className="weather-title">Weather Forecast</h1>
 
         <form className="weather-search" onSubmit={handleSubmit}>
@@ -58,51 +53,38 @@ function Weather() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-
           <button type="submit">Search</button>
         </form>
 
         {loading ? (
           <p className="loading-text">Loading weather...</p>
-        ) : weather?.main ? (
+        ) : weather?.main && weather.weather?.[0] ? (
           <>
             <div className="weather-card">
-
               <div className="weather-main">
-
                 <h2>{weather.name}</h2>
-
-                <p className="weather-type">
-                  {weather.weather[0].main}
-                </p>
-
+                <p className="weather-type">{weather.weather[0].main}</p>
                 <p className="weather-description">
                   {weather.weather[0].description}
                 </p>
-
                 <h1 className="temperature">
                   {convertToCelsius(weather.main.temp)}°
                 </h1>
-
                 <p className="feels-like">
-                  Feels like{" "}
-                  {convertToCelsius(weather.main.feels_like)}°
+                  Feels like {convertToCelsius(weather.main.feels_like)}°
                 </p>
               </div>
 
               <div className="weather-icon-container">
-
                 <img
                   src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@4x.png`}
                   alt="weather-icon"
                   className="weather-icon"
                 />
-
               </div>
             </div>
 
             <div className="weather-details">
-
               <div className="detail-card">
                 <h3>Humidity</h3>
                 <p>{weather.main.humidity}%</p>
@@ -110,7 +92,7 @@ function Weather() {
 
               <div className="detail-card">
                 <h3>Wind Speed</h3>
-                <p>{weather.wind.speed} km/h</p>
+                <p>{weather.wind?.speed ?? 0} km/h</p>
               </div>
 
               <div className="detail-card">
@@ -120,27 +102,32 @@ function Weather() {
 
               <div className="detail-card">
                 <h3>Visibility</h3>
-                <p>{weather.visibility} m</p>
+                <p>{weather.visibility ?? 0} m</p>
               </div>
 
               <div className="detail-card">
                 <h3>Sunrise</h3>
                 <p>
-                  {new Date(
-                    weather.sys.sunrise * 1000
-                  ).toLocaleTimeString()}
+                  {weather.sys?.sunrise
+                    ? new Date(weather.sys.sunrise * 1000).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "N/A"}
                 </p>
               </div>
 
               <div className="detail-card">
                 <h3>Sunset</h3>
                 <p>
-                  {new Date(
-                    weather.sys.sunset * 1000
-                  ).toLocaleTimeString()}
+                  {weather.sys?.sunset
+                    ? new Date(weather.sys.sunset * 1000).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "N/A"}
                 </p>
               </div>
-
             </div>
           </>
         ) : (
@@ -150,4 +137,5 @@ function Weather() {
     </div>
   );
 }
+
 export default Weather;
