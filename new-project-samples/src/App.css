@@ -316,8 +316,3 @@
     flex-direction: column;
     width: 100%;
     max-width: 340px;
-  } 
-  .explore-btn, .contact-btn {
-    width: 100%;
-  }
-}
